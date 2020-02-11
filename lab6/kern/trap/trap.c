@@ -245,12 +245,12 @@ trap_dispatch(struct trapframe *tf) {
          *    Every tick, you should update the system time, iterate the timers, and trigger the timers which are end to call scheduler.
          *    You can use one funcitons to finish all these things.
          */
-  
+    	run_timer_list();
         ticks ++;
-        if (ticks % TICK_NUM == 0) {
+        /*if (ticks % TICK_NUM == 0) {
         	assert(current != NULL);
             current->need_resched = 1;
-        }
+        }*/
         break;
     case IRQ_OFFSET + IRQ_COM1:
         c = cons_getc();

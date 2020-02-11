@@ -5,7 +5,8 @@
 #include <list.h>
 #include <skew_heap.h>
 
-#define MAX_TIME_SLICE 20
+#define MAX_TIME_SLICE 5
+#define MULTI_QUEUE_NUM 5
 
 struct proc_struct;
 
@@ -58,8 +59,12 @@ struct run_queue {
     list_entry_t run_list;
     unsigned int proc_num;
     int max_time_slice;
-    // For LAB6 ONLY
+    // below are used For LAB6 ONLY
     skew_heap_entry_t *lab6_run_pool;
+    // for multi-level feedback queue scheduling only
+    list_entry_t multi_run_list[MULTI_QUEUE_NUM];
+    // for CFS scheduling only
+    skew_heap_entry_t *fair_run_pool;
 };
 
 void sched_init(void);

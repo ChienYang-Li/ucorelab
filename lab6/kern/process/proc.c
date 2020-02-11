@@ -133,7 +133,16 @@ alloc_proc(void) {
     	memset(proc->name, 0, PROC_NAME_LEN);
     	proc->wait_state = 0;
     	proc->cptr = proc->yptr = proc->optr = NULL;
-
+    	proc->rq = NULL;
+    	list_init(&proc->run_link);
+    	proc->time_slice = 0;
+    	skew_heap_init(&proc->lab6_run_pool);
+    	proc->lab6_stride = 0;
+    	proc->lab6_priority = 1;
+    	proc->multi_level = -1;
+    	proc->fair_priority = 1;
+    	proc->fair_run_time = 0;
+    	skew_heap_init(&proc->fair_run_pool);
     }
     return proc;
 }
@@ -715,6 +724,7 @@ execve_exit:
 // do_yield - ask the scheduler to reschedule
 int
 do_yield(void) {
+	current->fair_run_time += current->rq->max_time_slice * current->fair_priority;
     current->need_resched = 1;
     return 0;
 }
@@ -920,4 +930,6 @@ lab6_set_priority(uint32_t priority)
     if (priority == 0)
         current->lab6_priority = 1;
     else current->lab6_priority = priority;
+
+    current->fair_priority = 60/current->lab6_priority +1;
 }
