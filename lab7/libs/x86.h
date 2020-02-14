@@ -59,6 +59,13 @@ inb(uint16_t port) {
 
 static inline void
 insl(uint32_t port, void *addr, int cnt) {
+	/*
+	 * cld: set df=0
+	 * repne: repeat until ecx=0
+	 * insl:Input doubleword(4bytes) from I/O port specified in DX into memory
+	 * location specified in ES:(E)DI. EDI=EDI+4 when df=0.
+	 * addr in EDI, cnt in ecx, port in edx,
+	 */
     asm volatile (
         "cld;"
         "repne; insl;"

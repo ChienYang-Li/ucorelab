@@ -73,6 +73,7 @@ finish_probe:
 
     # Jump to next instruction, but in 32-bit code segment.
     # Switches processor into 32-bit mode.
+    #load $PROT_MODE_CSEG in cs, $protcseg in eip
     ljmp $PROT_MODE_CSEG, $protcseg
 
 .code32                                             # Assemble for 32-bit mode

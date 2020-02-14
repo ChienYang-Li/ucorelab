@@ -401,10 +401,13 @@ do_pgfault(struct mm_struct *mm, uint32_t error_code, uintptr_t addr) {
         goto failed;
     }
     //check the error_code
+	bool cow = 0; //copy on write flag
     switch (error_code & 3) {
     default:
-            /* error code flag : default is 3 ( W/R=1, P=1): write, present */
-    case 2: /* error code flag : (W/R=1, P=0): write, not present */
+        /* error code flag : default is 3 ( W/R=1, P=1): write, present */
+		cow = 1;
+		break;
+	case 2: /* error code flag : (W/R=1, P=0): write, not present */
         if (!(vma->vm_flags & VM_WRITE)) {
             cprintf("do_pgfault failed: error code flag = write AND not present, but the addr's vma cannot write\n");
             goto failed;
@@ -493,6 +496,37 @@ do_pgfault(struct mm_struct *mm, uint32_t error_code, uintptr_t addr) {
         }
    }
 #endif
+	ptep = get_pte(mm->pgdir, addr, 1);
+	if (ptep == NULL) {
+		cprintf("get_pte in do_pgfault failed\n");
+		goto failed;
+	}
+	if (*ptep == 0) {
+		if (pgdir_alloc_page(mm->pgdir, addr, perm) == NULL) {
+			cprintf("pgdir_alloc_page in do_pgfault failed\n");
+			goto failed;
+		}
+	} else if (cow == 1) {
+		struct Page *page = pte2page(*ptep);
+		struct Page *npage=pgdir_alloc_page(mm->pgdir, addr, perm);
+		void *src_kvaddr = page2kva(page);
+		void *dst_kvaddr = page2kva(npage);
+		memcpy(dst_kvaddr, src_kvaddr, PGSIZE);
+	} else {
+		if (swap_init_ok) {
+			struct Page *page = NULL;
+			if ((swap_in(mm, addr, &page)) != 0) {
+				cprintf("swap_in in do_pgfault failed\n");
+				goto failed;
+			}
+			page_insert(mm->pgdir, page, addr, perm);
+			page->pra_vaddr = addr;
+			swap_map_swappable(mm, addr, page, 1);
+		} else {
+			cprintf("no swap_init_ok but ptep is %x, failed\n", *ptep);
+			goto failed;
+		}
+	}
    ret = 0;
 failed:
     return ret;
