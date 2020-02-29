@@ -307,7 +307,7 @@ sysfile_dup(int fd1, int fd2) {
 
 int
 sysfile_pipe(int *fd_store) {
-    return -E_UNIMP;
+    return file_pipe(fd_store);
 }
 
 int

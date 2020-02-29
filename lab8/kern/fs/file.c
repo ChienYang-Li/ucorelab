@@ -353,4 +353,41 @@ file_dup(int fd1, int fd2) {
     return file2->fd;
 }
 
-
+// create pipe
+int
+file_pipe(int *fd_store) {
+    int ret = 0;
+    // allocate fd
+    struct file *file_in, *file_out;
+    if ((ret = fd_array_alloc(NO_FD, &file_in)) != 0) {
+        return ret;
+    }
+    if ((ret = fd_array_alloc(NO_FD, &file_out)) != 0) {
+        fd_array_free(file_in);
+        return ret;
+    }
+    struct inode *node;
+    if ((node = pipe_create_inode()) == NULL) {
+        fd_array_free(file_in);
+        fd_array_free(file_out);
+        return -E_NO_MEM;
+    }
+    vop_ref_inc(node);
+    vop_open_inc(node);
+    vop_open_inc(node);
+    // set file descriptor
+    file_in->pos = 0;
+    file_in->node = node;
+    file_in->readable = 1;
+    file_in->writable = 0;
+    fd_array_open(file_in);
+    file_out->pos = 0;
+    file_out->node = node;
+    file_out->readable = 0;
+    file_out->writable = 1;
+    fd_array_open(file_out);
+    // set file descriptor number
+    fd_store[0] = file_in->fd;
+    fd_store[1] = file_out->fd;
+    return ret;
+}

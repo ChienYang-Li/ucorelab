@@ -77,7 +77,7 @@ vfs_get_root(const char *devname, struct inode **node_store) {
                 if (strcmp(devname, vdev->devname) == 0) {
                     struct inode *found = NULL;
                     if (vdev->fs != NULL) {
-                        found = fsop_get_root(vdev->fs);
+                        found = fsop_get_root(vdev->fs);//get the root dir inode of sfs
                     }
                     else if (!vdev->mountable) {
                         vop_ref_inc(vdev->devnode);

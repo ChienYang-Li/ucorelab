@@ -134,7 +134,7 @@ sfs_init_freemap(struct device *dev, struct bitmap *freemap, uint32_t blkno, uin
         if ((ret = sfs_init_read(dev, blkno, data)) != 0) {
             return ret;
         }
-        blkno ++, nblks --, data += SFS_BLKSIZE;
+        blkno ++, nblks --, data += SFS_BLKSIZE;//only gcc defines sizeof(void) == 1
     }
     return 0;
 }

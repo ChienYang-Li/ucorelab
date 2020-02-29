@@ -81,7 +81,7 @@ disk0_io(struct device *dev, struct iobuf *iob, bool write) {
 
     lock_disk0();
     while (resid != 0) {
-        size_t copied, alen = DISK0_BUFSIZE;
+        size_t copied, alen =) DISK0_BUFSIZE;
         if (write) {
             iobuf_move(iob, disk0_buffer, alen, 0, &copied);
             assert(copied != 0 && copied <= resid && copied % DISK0_BLKSIZE == 0);

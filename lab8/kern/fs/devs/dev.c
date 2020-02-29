@@ -153,7 +153,7 @@ dev_init(void) {
    // init_device(null);
     init_device(stdin);
     init_device(stdout);
-    init_device(disk0);
+    init_device(disk0);//init device inode based on disk of DISK0_DEV_NO
 }
 /* dev_create_inode - Create inode for a vfs-level device. */
 struct inode *

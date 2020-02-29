@@ -149,9 +149,9 @@ again:
             }
             break;
         case '|':
-          //  if ((ret = pipe(p)) != 0) {
-          //      return ret;
-          //  }
+            if ((ret = pipe(p)) != 0) {
+                return ret;
+            }
             if ((ret = fork()) == 0) {
                 close(0);
                 if ((ret = dup2(p[0], 0)) < 0) {
@@ -216,7 +216,7 @@ runit:
 
 int
 main(int argc, char **argv) {
-    printf("user sh is running!!!");
+    printf("user sh is running!!!, argc = %d,argv[0] = %s", argc,argv[0]);
     int ret, interactive = 1;
     if (argc == 2) {
         if ((ret = reopen(0, argv[1], O_RDONLY)) != 0) {

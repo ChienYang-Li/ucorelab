@@ -4,6 +4,7 @@
 #include <defs.h>
 #include <dev.h>
 #include <sfs.h>
+#include <pipe.h>
 #include <atomic.h>
 #include <assert.h>
 
@@ -28,10 +29,12 @@ struct iobuf;
  */
 struct inode {
     union {
+        struct pipe __pipe_info;
         struct device __device_info;
         struct sfs_inode __sfs_inode_info;
     } in_info;
     enum {
+        inode_type_pipe_info = 0x1233,
         inode_type_device_info = 0x1234,
         inode_type_sfs_inode_info,
     } in_type;

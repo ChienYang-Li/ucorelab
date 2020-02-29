@@ -56,7 +56,7 @@ readsect(void *dst, uint32_t secno) {
     // wait for disk to be ready
     waitdisk();
 
-    // read a sector
+    // read a sector(512bytes)
     insl(0x1F0, dst, SECTSIZE / 4);
 }
 

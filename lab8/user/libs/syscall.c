@@ -143,3 +143,8 @@ int
 sys_dup(int fd1, int fd2) {
     return syscall(SYS_dup, fd1, fd2);
 }
+
+int
+sys_pipe(int *fd_store) {
+    return syscall(SYS_pipe, fd_store);
+}

@@ -13,7 +13,7 @@
  */
 static struct inode *
 get_cwd_nolock(void) {
-    return current->filesp->pwd;
+    return current->filesp->pwd;//pwd = sfs root dir inode(disk0:)
 }
 /*
  * set_cwd_nolock - set current working directory.
@@ -91,7 +91,7 @@ int
 vfs_chdir(char *path) {
     int ret;
     struct inode *node;
-    if ((ret = vfs_lookup(path, &node)) == 0) {
+    if ((ret = vfs_lookup(path, &node)) == 0) {//node = sfs root dir inode
         ret = vfs_set_curdir(node);
         vop_ref_dec(node);
     }

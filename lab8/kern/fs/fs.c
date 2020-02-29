@@ -11,8 +11,9 @@
 void
 fs_init(void) {
     vfs_init();
-    dev_init();
-    sfs_init();
+    dev_init();//add the device inode of stdin,stdout,disk0 into vdev_list
+    sfs_init();//mksfs write the file system on sfs.img
+    		   //mount the file system on fs of device inode of disk0
 }
 
 void
